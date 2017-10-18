@@ -2,7 +2,7 @@ import Alexa from 'alexa-sdk'
 import axios from 'axios'
 import get from 'lodash.get'
 
-let config
+var config
 
 function setConfig(newConfig) {
   config = newConfig
