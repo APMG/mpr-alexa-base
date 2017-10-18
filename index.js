@@ -13,9 +13,9 @@ function getIntentHandlers(newConfig) {
     config = newConfig
   }
 
-  if (!config || typeof config === 'undefined') {
-    throw new Error('You must pass in configuration values with `setConfig` or `getIntentHandlers` before getting intent handlers')
-  }
+  // if (!config || typeof config === 'undefined') {
+  //   throw new Error('You must pass in configuration values with `setConfig` or `getIntentHandlers` before getting intent handlers')
+  // }
 
   return {
     'LaunchRequest': function () {
