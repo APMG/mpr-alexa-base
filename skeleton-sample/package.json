@@ -1,14 +1,12 @@
 {
-  "name": "mpr-alexa-base",
+  "name": "mpr-skeleton-alexa",
   "version": "0.0.1",
-  "description": "A Base Configurable Set of Alexa Skill Handlers for Streaming Audio",
+  "description": "A Skeleton for an MPR streaming audio skill",
   "author": "Minnesota Public Radio",
   "license": "MIT",
   "dependencies": {
-    "alexa-sdk": "^1.0.14",
-    "axios": "^0.16.2",
-    "lodash.get": "^4.4.2"
-  },
+    "mpr-alexa-base": "git+ssh://git@gitlab.mpr.org:js-libraries/mpr-alexa-base.git"
+    },
   "scripts": {
     "build": "webpack",
     "zip": "cd dist && zip ../alexa-bundle.zip * && cd ../",
