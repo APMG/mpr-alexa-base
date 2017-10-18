@@ -41,7 +41,7 @@ function getIntentHandlers(newConfig) {
           let songDesc = title
             + " by "
             + artist
-            + song.album ? ' from the album ' + song.album : ''
+            + (song.album ? ' from the album ' + song.album : '')
 
           self.emit(
             ':tellWithCard',
