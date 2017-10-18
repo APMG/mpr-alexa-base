@@ -150,7 +150,7 @@ function noop () {}
 export default {
   setConfig: setConfig,
   // So you can configure them if you want
-  getIntentHandlers: getIntentHandlers(),
+  getIntentHandlers: getIntentHandlers,
   createLambdaHandler: function(handlers) {
     handlers = handlers || getIntentHandlers()
     return function (event, context, callback) {
