@@ -9,11 +9,11 @@ function setConfig(newConfig) {
 }
 
 function getIntentHandlers(newConfig) {
-  if (newConfig) {
+  if (typeof newConfig !== 'undefined') {
     config = newConfig
   }
 
-  if (!config) {
+  if (!config || typeof config === 'undefined') {
     throw new Error('You must pass in configuration values with `setConfig` or `getIntentHandlers` before getting intent handlers')
   }
 
