@@ -1,5 +1,5 @@
 import config from './config'
 import mprAlexaBase from 'mpr-alexa-base'
 
-mprAlexaBase.configure(config)
+mprAlexaBase.setConfig(config)
 exports.handler = mprAlexaBase.createLambdaHandler()
