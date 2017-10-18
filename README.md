@@ -17,6 +17,6 @@ To customize handlers, call `getIntentHandlers()` (with an optional config param
 ```
 
 ## Deployment
-Then run `yarn run deploy` to generate a .zip file that is ready to be uploaded to Lambda.
+Then run `yarn run deploy` to generate a file called `alexa-bundle.zip` that is ready to be uploaded to Lambda.
 
-You should be able to drop the `intents.json` file from the skeleton code right into the code editor on the interaction model builder.
+You should be able to drop the `intents.json` file from the skeleton code right into the code editor on the interaction model builder. Click "Build Model" then "Save Model"
