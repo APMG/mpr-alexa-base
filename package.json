@@ -1,0 +1,13 @@
+{
+  "name": "mpr-alexa-base",
+  "version": "0.0.1",
+  "description": "A Base Configurable Set of Alexa Skill Handlers for Streaming Audio",
+  "main": "index.js",
+  "author": "Minnesota Public Radio",
+  "license": "MIT",
+  "dependencies": {
+    "alexa-sdk": "^1.0.14",
+    "axios": "^0.16.2",
+    "lodash.get": "^4.4.2"
+  }
+}
