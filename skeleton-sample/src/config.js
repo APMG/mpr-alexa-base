@@ -2,6 +2,8 @@ const stationSlug = 'your-station-slug'
 export default {
   APP_ID: 'amzn1.ask.skill.abunch-ofletters-andnumbers-etc348-wgjeg',
   STATION_SLUG: stationSlug,
+  STATION_NAME: 'Station name', // e.g., "The Current"
+  DEFAULT_SHOW_NAME: 'Default Show', // e.g., "Current Music" - what nowplaying returns when there's no "show"
   STREAM_URL: 'www.yourstream.url/goes/here.mp3',
   NOW_PLAYING_URL: 'https://nowplaying.publicradio.org/' + stationSlug,
   CARD_TITLE: 'The Title For Your Cards',

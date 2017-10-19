@@ -22,7 +22,7 @@ function getIntentHandlers(newConfig) {
       addPlayDirective(this)
       this.response
         .cardRenderer(config.CARD_TITLE, config.CARD_CONTENT)
-        .speak(config.SPOKEN_WELCOME)
+        .speak(config.SPOKEN_WELCOME || 'Welcome to ' + config.STATION_NAME)
 
       this.emit(':responseReady')
     },
@@ -69,10 +69,17 @@ function getIntentHandlers(newConfig) {
           let hosts = program.people.map(function (person) { return person.name })
           let show = program.shows[0]
 
-          let msg = show.name
+          let msg = ''
+
+          if (show.name !== config.DEFAULT_SHOW_NAME) {
+            msg += show.name
+          }
           if (hosts) {
             let hostSingPlur = hosts.length > 1 ? 'hosts' : 'host'
-            msg += ' with ' + hostSingPlur + ' ' + arrayToSentence(hosts)
+            // if the show name is in the message, add "with" to it
+            msg += msg.length ? ' with ' : ''
+            // otherwise we just return the host name(s)
+            msg += hostSingPlur + ' ' + arrayToSentence(hosts)
           }
 
           self.emit(
