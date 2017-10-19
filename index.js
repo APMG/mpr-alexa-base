@@ -75,7 +75,6 @@ function getIntentHandlers(newConfig) {
             msg += show.name
           }
           if (hosts) {
-            let hostSingPlur = hosts.length > 1 ? 'hosts' : 'host'
             // if the show name is in the message, add "with" to it
             msg += msg.length ? ' with ' : ''
             // otherwise we just return the host name(s)
