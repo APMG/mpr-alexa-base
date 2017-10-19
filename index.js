@@ -84,7 +84,7 @@ function getIntentHandlers(newConfig) {
 
           self.emit(
             ':tellWithCard',
-            'You are listening to ' + msg,
+            'You are listening to ' + (msg || config.STATION_NAME),
             'Now Playing',
             msg
           )
