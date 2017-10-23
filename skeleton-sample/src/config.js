@@ -13,5 +13,9 @@ export default {
   SPOKEN_UNHANDLED: 'I don\'t know how to interpret that',
   SPOKEN_CANNOT_FIND: 'Sorry, I can\'t find that information right now',
   SPOKEN_ILLOGICAL: 'I can\'t do that - this is a live stream',
-  SPOKEN_ERROR: 'Something went wrong. I was unable to complete your request'
+  SPOKEN_ERROR: 'Something went wrong. I was unable to complete your request',
+  HOST_PHONEMES: {
+    'Lucia': 'lutS"i@',
+    'Staruch': 'steIr\\Vk'
+  }
 }
