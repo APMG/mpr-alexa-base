@@ -1,5 +1,5 @@
 import Alexa from 'alexa-sdk'
-import intents from './intents'
+import * as intents from './intents'
 
 export default {
   intents: intents,
