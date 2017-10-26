@@ -1,27 +1,24 @@
 // @flow
 import get from 'lodash.get'
 import isFunction from 'lodash.isfunction'
-import client from '../api-client'
+import got from 'got'
 import { type APIMessageFragment, buildMessageFromSpec } from '../speech-builder'
 
 let config
-let context
 
 export default function (stationConfig: any, handler: any, error: (response: any) => {}) {
   config = stationConfig
-  context = this
-
-  if (!isFunction(handler)) {
-    handler = fromMessageSpec(handler || defaultMsgSpec)
-  }
 
   return {
     'AskSongIntent': function () {
-      return client(config.NOW_PLAYING_URL)
-        .get('/schedule')
+      if (!isFunction(handler)) {
+        handler = fromMessageSpec(handler || defaultMsgSpec).bind(this)
+      }
+
+      return got(config.NOW_PLAYING_URL + '/playlist')
         .then(
           handler,
-          error || defaultError
+          error || defaultError().bind(this)
         )
     }
   }
@@ -46,15 +43,16 @@ const defaultMsgSpec : Array<APIMessageFragment> = [
 
 function fromMessageSpec (messageSpec: Array<APIMessageFragment>) {
   return function (response): void {
-    let songs = get(response, 'data.data.songs', null)
+    let body = JSON.parse(response.body)
+    let songs = get(body, 'data.songs', null)
 
     if (!songs || !songs.length || !songs[0]) {
-      context.emit(':tell', config.SPOKEN_CANNOT_FIND)
+      this.emit(':tell', config.SPOKEN_CANNOT_FIND)
     }
 
     let songDesc = buildMessageFromSpec(songs[0], messageSpec)
 
-    context.emit(
+    this.emit(
       ':tellWithCard',
       'Now playing ' + songDesc,
       'Now Playing',
@@ -63,6 +61,8 @@ function fromMessageSpec (messageSpec: Array<APIMessageFragment>) {
   }
 }
 
-function defaultError (error) {
-  context.emit(':tell', config.SPOKEN_ERROR)
+function defaultError () {
+  return function (error) {
+    this.emit(':tell', config.SPOKEN_ERROR)
+  }
 }
