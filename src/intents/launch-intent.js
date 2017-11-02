@@ -1,7 +1,6 @@
-// @flow
 var directives = require('../directives')
 
-export default function (stationConfig: any) {
+export default function (stationConfig) {
   return {
     'LaunchRequest': function () {
       directives.addPlayDirective(this, stationConfig.STREAM_URL)
