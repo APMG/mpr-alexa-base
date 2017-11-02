@@ -1,12 +1,11 @@
-import {
-  addPlayDirective,
-  stop,
-  say
-} from '../directives'
+var directives = require('../directives')
+var addPlayDirective = directives.addPlayDirective
+var stop = directives.stop
+var say = directives.say
 
-let config
+var config
 
-export default function (stationConfig) {
+exports.default = function (stationConfig) {
   config = stationConfig
   return builtIns
 }
@@ -32,7 +31,9 @@ const builtIns = {
   'AMAZON.ShuffleOnIntent': function () { cannotDoForLiveStream(this) },
   'AMAZON.ShuffleOffIntent': function () { cannotDoForLiveStream(this) },
   'AMAZON.StartOverIntent': function () { cannotDoForLiveStream(this) },
-  'SessionEndedRequest': noop,
+  'SessionEndedRequest': function () {
+    this.emit(':saveState', true)
+  },
   'PlaybackNearlyFinished': noop
 }
 

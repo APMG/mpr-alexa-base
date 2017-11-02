@@ -1,4 +1,4 @@
-export function addPlayDirective (context, streamUrl) {
+exports.addPlayDirective = function (context, streamUrl) {
   context.response.audioPlayerPlay(
     'REPLACE_ALL', // replace the entire queue with the new url
     streamUrl,
@@ -8,12 +8,12 @@ export function addPlayDirective (context, streamUrl) {
   )
 }
 
-export function stop (context) {
+exports.stop = function (context) {
   context.response.audioPlayerClearQueue('CLEAR_ALL')
   context.emit(':responseReady')
 }
 
-export function say (context, message) {
+exports.say = function (context, message) {
   context.response.speak(message)
   context.emit(':responseReady', message)
 }

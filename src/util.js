@@ -1,4 +1,4 @@
-export function arrayToSentence (arr) {
+exports.arrayToSentence = function (arr) {
   if (arr.length === 1) {
     return arr[0]
   }
@@ -6,7 +6,7 @@ export function arrayToSentence (arr) {
   return arr.join(', ') + ' and ' + last
 }
 
-export function replacePhonemes (string, phonemeDictionary) {
+exports.replacePhonemes = function (string, phonemeDictionary) {
   for (var phoneme in phonemeDictionary) {
     if (string.indexOf(phoneme) !== -1) {
       string = string.replace(

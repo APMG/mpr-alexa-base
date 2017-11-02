@@ -1,14 +1,8 @@
-// @flow
-export type APIMessageFragment = {
-  key: string,
-  delimiterText: string
-}
-
 // This accepts an array of APIMessageFragments and
 // behaves more or less like array.join(), except
 // that each value in the array defines its own
 // custom `delimiterText`
-export function buildMessageFromSpec (sourceObj: any, msgSpec: Array<APIMessageFragment>) {
+exports.buildMessageFromSpec = function (sourceObj, msgSpec) {
   let result = ''
 
   for (var m = 0; m < msgSpec.length; m++) {

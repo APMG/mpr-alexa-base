@@ -1,8 +1,10 @@
-import got from 'got'
-import get from 'lodash.get'
-import { replacePhonemes, arrayToSentence } from '../util'
+var got = require('got')
+var get = require('lodash.get')
+var util = require('../util')
+var replacePhonemes = util.replacePhonemes
+var arrayToSentence = util.arrayToSentence
 
-let config
+var config
 
 export default function (stationConfig, handler, error) {
   config = stationConfig
@@ -30,7 +32,7 @@ function defaultHandler (context) {
     let msg = buildMessage(program)
     context.emit(
       ':tellWithCard',
-      'You are listening to ' + msg,
+      'You are listening to ' + handleHostPhonemes(msg),
       'Now Playing',
       msg
     )
@@ -53,7 +55,7 @@ function buildMessage (program) {
 
   if (program.people.length) {
     let names = program.people.map(function (person) { return person.name })
-    let hosts = handleHostPhonemes(arrayToSentence(names))
+    let hosts = arrayToSentence(names)
     // if the show name is in the message, add "with" to it
     msg += msg.length ? ' with ' : ''
     // otherwise we just return the host name(s)
@@ -68,7 +70,7 @@ function buildMessage (program) {
 function handleHostPhonemes (hosts) {
   // if no hosts are configured with phonetic
   // pronunciations (meaning Alexa pronounces
-  // them corretctly by default), just return
+  // them correctly by default), just return
   // the names as they are
   if (!config.HOST_PHONEMES) {
     return hosts

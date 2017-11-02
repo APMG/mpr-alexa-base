@@ -1,12 +1,11 @@
-// @flow
-import get from 'lodash.get'
-import isFunction from 'lodash.isfunction'
-import got from 'got'
-import { type APIMessageFragment, buildMessageFromSpec } from '../speech-builder'
+var get = require('lodash.get')
+var isFunction = require('lodash.isfunction')
+var got = require('got')
+var speechBuilder = require('../speech-builder')
 
-let config
+var config
 
-export default function (stationConfig: any, handler: any, error: (response: any) => {}) {
+exports.default = function (stationConfig, handler, error) {
   config = stationConfig
 
   return {
@@ -26,7 +25,7 @@ export default function (stationConfig: any, handler: any, error: (response: any
 
 // instead of having to provide a totally custom handler,
 // users can supply a "msgSpec". This one works for The Current
-const defaultMsgSpec : Array<APIMessageFragment> = [
+const defaultMsgSpec = [
   {
     key: 'title',
     delimiterText: 'the song'
@@ -41,8 +40,8 @@ const defaultMsgSpec : Array<APIMessageFragment> = [
   }
 ]
 
-function fromMessageSpec (messageSpec: Array<APIMessageFragment>) {
-  return function (response): void {
+function fromMessageSpec (messageSpec) {
+  return function (response) {
     let body = JSON.parse(response.body)
     let songs = get(body, 'data.songs', null)
 
@@ -50,7 +49,7 @@ function fromMessageSpec (messageSpec: Array<APIMessageFragment>) {
       this.emit(':tell', config.SPOKEN_CANNOT_FIND)
     }
 
-    let songDesc = buildMessageFromSpec(songs[0], messageSpec)
+    let songDesc = speechBuilder.buildMessageFromSpec(songs[0], messageSpec)
 
     this.emit(
       ':tellWithCard',

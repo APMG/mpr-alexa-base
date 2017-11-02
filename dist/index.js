@@ -8755,21 +8755,21 @@ const https = __webpack_require__(49);
 const PassThrough = __webpack_require__(10).PassThrough;
 const urlLib = __webpack_require__(48);
 const querystring = __webpack_require__(96);
-const duplexer3 = __webpack_require__(661);
-const isStream = __webpack_require__(662);
-const getStream = __webpack_require__(663);
-const timedOut = __webpack_require__(665);
-const urlParseLax = __webpack_require__(666);
-const urlToOptions = __webpack_require__(668);
-const lowercaseKeys = __webpack_require__(669);
-const decompressResponse = __webpack_require__(670);
-const isRetryAllowed = __webpack_require__(673);
-const Buffer = __webpack_require__(674).Buffer;
-const isURL = __webpack_require__(675);
-const isPlainObj = __webpack_require__(679);
-const PCancelable = __webpack_require__(680);
-const pTimeout = __webpack_require__(681);
-const pkg = __webpack_require__(683);
+const duplexer3 = __webpack_require__(662);
+const isStream = __webpack_require__(663);
+const getStream = __webpack_require__(664);
+const timedOut = __webpack_require__(666);
+const urlParseLax = __webpack_require__(667);
+const urlToOptions = __webpack_require__(669);
+const lowercaseKeys = __webpack_require__(670);
+const decompressResponse = __webpack_require__(671);
+const isRetryAllowed = __webpack_require__(674);
+const Buffer = __webpack_require__(675).Buffer;
+const isURL = __webpack_require__(676);
+const isPlainObj = __webpack_require__(680);
+const PCancelable = __webpack_require__(681);
+const pTimeout = __webpack_require__(682);
+const pkg = __webpack_require__(684);
 
 const getMethodRedirectCodes = new Set([300, 301, 302, 303, 304, 305, 307, 308]);
 const allMethodRedirectCodes = new Set([300, 303, 307, 308]);
@@ -8792,7 +8792,7 @@ function requestAsEventEmitter(opts) {
 		let fn = opts.protocol === 'https:' ? https : http;
 
 		if (opts.useElectronNet && process.versions.electron) {
-			const electron = __webpack_require__(684);
+			const electron = __webpack_require__(685);
 			fn = electron.net || electron.remote.net;
 		}
 
@@ -10173,29 +10173,23 @@ module.exports = get;
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.addPlayDirective = addPlayDirective;
-exports.stop = stop;
-exports.say = say;
-function addPlayDirective(context, streamUrl) {
+exports.addPlayDirective = function (context, streamUrl) {
   context.response.audioPlayerPlay('REPLACE_ALL', // replace the entire queue with the new url
   streamUrl, '1', // this is the track number. We are streaming live so it's only ever one track
   null, // this would be the anticipated "next" track, if there were one
   0 // where in the track to begin playing from, in milliseconds
   );
-}
+};
 
-function stop(context) {
+exports.stop = function (context) {
   context.response.audioPlayerClearQueue('CLEAR_ALL');
   context.emit(':responseReady');
-}
+};
 
-function say(context, message) {
+exports.say = function (context, message) {
   context.response.speak(message);
   context.emit(':responseReady', message);
-}
+};
 
 /***/ }),
 /* 105 */
@@ -10207,25 +10201,26 @@ function say(context, message) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.intents = exports.createLambdaHandler = undefined;
 
-var _alexaSdk = __webpack_require__(106);
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var _alexaSdk2 = _interopRequireDefault(_alexaSdk);
-
-var _intents = __webpack_require__(659);
-
-var intents = _interopRequireWildcard(_intents);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var Alexa = __webpack_require__(106);
+var isArray = __webpack_require__(659);
+var intents = __webpack_require__(660);
 
 var createLambdaHandler = function createLambdaHandler(config, handlers) {
   return function (event, context, callback) {
-    var alexa = _alexaSdk2.default.handler(event, context, callback);
+    var alexa = Alexa.handler(event, context, callback);
     alexa.appId = config.APP_ID;
-    alexa.registerHandlers(handlers);
+    if (isArray(handlers)) {
+      alexa.registerHandlers.apply(alexa, _toConsumableArray(handlers));
+    } else {
+      alexa.registerHandlers(handlers);
+    }
+    if (config.DYNAMODB_TABLE_NAME) {
+      alexa.dynamoDBTableName = config.DYNAMODB_TABLE_NAME;
+    }
+    console.log('dynamo table', alexa.dynamoDBTableName);
     alexa.execute();
   };
 };
@@ -34648,41 +34643,59 @@ module.exports.ImageUtils = ImageUtils;
 
 /***/ }),
 /* 659 */
+/***/ (function(module, exports) {
+
+/**
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @type Function
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+module.exports = isArray;
+
+
+/***/ }),
+/* 660 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.launch = exports.defaultBuiltIns = exports.askSong = exports.askShow = undefined;
-
-var _askShowIntent = __webpack_require__(660);
-
-var _askShowIntent2 = _interopRequireDefault(_askShowIntent);
-
-var _askSongIntent = __webpack_require__(686);
-
-var _askSongIntent2 = _interopRequireDefault(_askSongIntent);
-
-var _defaultBuiltIn = __webpack_require__(689);
-
-var _defaultBuiltIn2 = _interopRequireDefault(_defaultBuiltIn);
-
-var _launchIntent = __webpack_require__(690);
-
-var _launchIntent2 = _interopRequireDefault(_launchIntent);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.askShow = _askShowIntent2.default;
-exports.askSong = _askSongIntent2.default;
-exports.defaultBuiltIns = _defaultBuiltIn2.default;
-exports.launch = _launchIntent2.default;
+exports.askShow = __webpack_require__(661).default;
+exports.askSong = __webpack_require__(687).default;
+exports.defaultBuiltIns = __webpack_require__(690).default;
+exports.launch = __webpack_require__(691).default;
 
 /***/ }),
-/* 660 */
+/* 661 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34696,29 +34709,23 @@ exports.default = function (stationConfig, handler, error) {
   config = stationConfig;
   return {
     'AskShowIntent': function AskShowIntent() {
-      return (0, _got2.default)(config.NOW_PLAYING_URL + '/schedule').then(handler || defaultHandler(this), error || defaultError(this));
+      return got(config.NOW_PLAYING_URL + '/schedule').then(handler || defaultHandler(this), error || defaultError(this));
     }
   };
 };
 
-var _got = __webpack_require__(102);
+var got = __webpack_require__(102);
+var get = __webpack_require__(103);
+var util = __webpack_require__(686);
+var replacePhonemes = util.replacePhonemes;
+var arrayToSentence = util.arrayToSentence;
 
-var _got2 = _interopRequireDefault(_got);
-
-var _lodash = __webpack_require__(103);
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _util = __webpack_require__(685);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var config = void 0;
+var config;
 
 function defaultHandler(context) {
   return function (response) {
     var body = JSON.parse(response.body);
-    var schedule = (0, _lodash2.default)(body, 'data.schedule', null);
+    var schedule = get(body, 'data.schedule', null);
     var program = schedule && schedule.length ? schedule[0] : null;
 
     if (!program || !(program.people || program.shows)) {
@@ -34726,7 +34733,7 @@ function defaultHandler(context) {
     }
 
     var msg = buildMessage(program);
-    context.emit(':tellWithCard', 'You are listening to ' + msg, 'Now Playing', msg);
+    context.emit(':tellWithCard', 'You are listening to ' + handleHostPhonemes(msg), 'Now Playing', msg);
   };
 }
 
@@ -34748,7 +34755,7 @@ function buildMessage(program) {
     var names = program.people.map(function (person) {
       return person.name;
     });
-    var hosts = handleHostPhonemes((0, _util.arrayToSentence)(names));
+    var hosts = arrayToSentence(names);
     // if the show name is in the message, add "with" to it
     msg += msg.length ? ' with ' : '';
     // otherwise we just return the host name(s)
@@ -34763,7 +34770,7 @@ function buildMessage(program) {
 function handleHostPhonemes(hosts) {
   // if no hosts are configured with phonetic
   // pronunciations (meaning Alexa pronounces
-  // them corretctly by default), just return
+  // them correctly by default), just return
   // the names as they are
   if (!config.HOST_PHONEMES) {
     return hosts;
@@ -34771,11 +34778,11 @@ function handleHostPhonemes(hosts) {
 
   // otherwise, replace any instances of phonemes
   // with the configured phonetic values
-  return (0, _util.replacePhonemes)(hosts, config.HOST_PHONEMES);
+  return replacePhonemes(hosts, config.HOST_PHONEMES);
 }
 
 /***/ }),
-/* 661 */
+/* 662 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34858,7 +34865,7 @@ module.exports.DuplexWrapper = DuplexWrapper;
 
 
 /***/ }),
-/* 662 */
+/* 663 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34886,12 +34893,12 @@ isStream.transform = function (stream) {
 
 
 /***/ }),
-/* 663 */
+/* 664 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const bufferStream = __webpack_require__(664);
+const bufferStream = __webpack_require__(665);
 
 function getStream(inputStream, opts) {
 	if (!inputStream) {
@@ -34944,7 +34951,7 @@ module.exports.array = (stream, opts) => getStream(stream, Object.assign({}, opt
 
 
 /***/ }),
-/* 664 */
+/* 665 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35002,7 +35009,7 @@ module.exports = opts => {
 
 
 /***/ }),
-/* 665 */
+/* 666 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35064,13 +35071,13 @@ module.exports = function (req, time) {
 
 
 /***/ }),
-/* 666 */
+/* 667 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var url = __webpack_require__(48);
-var prependHttp = __webpack_require__(667);
+var prependHttp = __webpack_require__(668);
 
 module.exports = function (x) {
 	var withProtocol = prependHttp(x);
@@ -35085,7 +35092,7 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 667 */
+/* 668 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35106,7 +35113,7 @@ module.exports = function (url) {
 
 
 /***/ }),
-/* 668 */
+/* 669 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35141,7 +35148,7 @@ module.exports = urlToOptions;
 
 
 /***/ }),
-/* 669 */
+/* 670 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35159,14 +35166,14 @@ module.exports = function (obj) {
 
 
 /***/ }),
-/* 670 */
+/* 671 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 const PassThrough = __webpack_require__(10).PassThrough;
-const zlib = __webpack_require__(671);
-const mimicResponse = __webpack_require__(672);
+const zlib = __webpack_require__(672);
+const mimicResponse = __webpack_require__(673);
 
 module.exports = response => {
 	// TODO: Use Array#includes when targeting Node.js 6
@@ -35195,13 +35202,13 @@ module.exports = response => {
 
 
 /***/ }),
-/* 671 */
+/* 672 */
 /***/ (function(module, exports) {
 
 module.exports = require("zlib");
 
 /***/ }),
-/* 672 */
+/* 673 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35241,7 +35248,7 @@ module.exports = (fromStream, toStream) => {
 
 
 /***/ }),
-/* 673 */
+/* 674 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35308,7 +35315,7 @@ module.exports = function (err) {
 
 
 /***/ }),
-/* 674 */
+/* 675 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable node/no-deprecated-api */
@@ -35376,13 +35383,13 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 
 /***/ }),
-/* 675 */
+/* 676 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const hasToStringTag = __webpack_require__(676);
-const isObject = __webpack_require__(678);
+const hasToStringTag = __webpack_require__(677);
+const isObject = __webpack_require__(679);
 
 const toString = Object.prototype.toString;
 const urlClass = "[object URL]";
@@ -35441,7 +35448,7 @@ module.exports = isURL;
 
 
 /***/ }),
-/* 676 */
+/* 677 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35463,11 +35470,11 @@ module.exports = isURL;
  *
  * @type boolean
  */
-module.exports = __webpack_require__(677) && typeof Symbol.toStringTag === 'symbol';
+module.exports = __webpack_require__(678) && typeof Symbol.toStringTag === 'symbol';
 
 
 /***/ }),
-/* 677 */
+/* 678 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35492,7 +35499,7 @@ module.exports = typeof Symbol === 'function' && typeof Symbol('') === 'symbol';
 
 
 /***/ }),
-/* 678 */
+/* 679 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35504,7 +35511,7 @@ module.exports = function isObject(x) {
 
 
 /***/ }),
-/* 679 */
+/* 680 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35518,7 +35525,7 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 680 */
+/* 681 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35602,12 +35609,12 @@ module.exports.CancelError = CancelError;
 
 
 /***/ }),
-/* 681 */
+/* 682 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const pFinally = __webpack_require__(682);
+const pFinally = __webpack_require__(683);
 
 class TimeoutError extends Error {
 	constructor(message) {
@@ -35645,7 +35652,7 @@ module.exports.TimeoutError = TimeoutError;
 
 
 /***/ }),
-/* 682 */
+/* 683 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35667,13 +35674,13 @@ module.exports = (promise, onFinally) => {
 
 
 /***/ }),
-/* 683 */
+/* 684 */
 /***/ (function(module, exports) {
 
 module.exports = {"name":"got","version":"7.1.0","description":"Simplified HTTP requests","license":"MIT","repository":"sindresorhus/got","maintainers":[{"name":"Sindre Sorhus","email":"sindresorhus@gmail.com","url":"sindresorhus.com"},{"name":"Vsevolod Strukchinsky","email":"floatdrop@gmail.com","url":"github.com/floatdrop"},{"name":"Alexander Tesfamichael","email":"alex.tesfamichael@gmail.com","url":"alextes.me"}],"engines":{"node":">=4"},"scripts":{"test":"xo && nyc ava","coveralls":"nyc report --reporter=text-lcov | coveralls"},"files":["index.js"],"keywords":["http","https","get","got","url","uri","request","util","utility","simple","curl","wget","fetch","net","network","electron"],"dependencies":{"decompress-response":"^3.2.0","duplexer3":"^0.1.4","get-stream":"^3.0.0","is-plain-obj":"^1.1.0","is-retry-allowed":"^1.0.0","is-stream":"^1.0.0","isurl":"^1.0.0-alpha5","lowercase-keys":"^1.0.0","p-cancelable":"^0.3.0","p-timeout":"^1.1.1","safe-buffer":"^5.0.1","timed-out":"^4.0.0","url-parse-lax":"^1.0.0","url-to-options":"^1.0.1"},"devDependencies":{"ava":"^0.20.0","coveralls":"^2.11.4","form-data":"^2.1.1","get-port":"^3.0.0","into-stream":"^3.0.0","nyc":"^11.0.2","pem":"^1.4.4","pify":"^3.0.0","tempfile":"^2.0.0","tempy":"^0.1.0","universal-url":"^1.0.0-alpha","xo":"^0.18.0"},"ava":{"concurrency":4},"browser":{"decompress-response":false}}
 
 /***/ }),
-/* 684 */
+/* 685 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__dirname) {var fs = __webpack_require__(30)
@@ -35690,26 +35697,21 @@ if (fs.existsSync(pathFile)) {
 /* WEBPACK VAR INJECTION */}.call(exports, "/"))
 
 /***/ }),
-/* 685 */
+/* 686 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.arrayToSentence = arrayToSentence;
-exports.replacePhonemes = replacePhonemes;
-function arrayToSentence(arr) {
+exports.arrayToSentence = function (arr) {
   if (arr.length === 1) {
     return arr[0];
   }
   var last = arr.pop();
   return arr.join(', ') + ' and ' + last;
-}
+};
 
-function replacePhonemes(string, phonemeDictionary) {
+exports.replacePhonemes = function (string, phonemeDictionary) {
   for (var phoneme in phonemeDictionary) {
     if (string.indexOf(phoneme) !== -1) {
       string = string.replace(phoneme, '<phoneme alphabet="ipa"' + 'ph="' + phonemeDictionary[phoneme] + '">' + phoneme + '</phoneme>');
@@ -35717,50 +35719,35 @@ function replacePhonemes(string, phonemeDictionary) {
   }
 
   return string;
-}
+};
 
 /***/ }),
-/* 686 */
+/* 687 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var get = __webpack_require__(103);
+var isFunction = __webpack_require__(688);
+var got = __webpack_require__(102);
+var speechBuilder = __webpack_require__(689);
+
+var config;
 
 exports.default = function (stationConfig, handler, error) {
   config = stationConfig;
 
   return {
     'AskSongIntent': function AskSongIntent() {
-      if (!(0, _lodash4.default)(handler)) {
+      if (!isFunction(handler)) {
         handler = fromMessageSpec(handler || defaultMsgSpec).bind(this);
       }
 
-      return (0, _got2.default)(config.NOW_PLAYING_URL + '/playlist').then(handler, error || defaultError().bind(this));
+      return got(config.NOW_PLAYING_URL + '/playlist').then(handler, error || defaultError().bind(this));
     }
   };
 };
-
-var _lodash = __webpack_require__(103);
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _lodash3 = __webpack_require__(687);
-
-var _lodash4 = _interopRequireDefault(_lodash3);
-
-var _got = __webpack_require__(102);
-
-var _got2 = _interopRequireDefault(_got);
-
-var _speechBuilder = __webpack_require__(688);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var config = void 0;
 
 // instead of having to provide a totally custom handler,
 // users can supply a "msgSpec". This one works for The Current
@@ -35778,13 +35765,13 @@ var defaultMsgSpec = [{
 function fromMessageSpec(messageSpec) {
   return function (response) {
     var body = JSON.parse(response.body);
-    var songs = (0, _lodash2.default)(body, 'data.songs', null);
+    var songs = get(body, 'data.songs', null);
 
     if (!songs || !songs.length || !songs[0]) {
       this.emit(':tell', config.SPOKEN_CANNOT_FIND);
     }
 
-    var songDesc = (0, _speechBuilder.buildMessageFromSpec)(songs[0], messageSpec);
+    var songDesc = speechBuilder.buildMessageFromSpec(songs[0], messageSpec);
 
     this.emit(':tellWithCard', 'Now playing ' + songDesc, 'Now Playing', songDesc);
   };
@@ -35797,7 +35784,7 @@ function defaultError() {
 }
 
 /***/ }),
-/* 687 */
+/* 688 */
 /***/ (function(module, exports) {
 
 /**
@@ -35878,23 +35865,17 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 688 */
+/* 689 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.buildMessageFromSpec = buildMessageFromSpec;
 
 
 // This accepts an array of APIMessageFragments and
 // behaves more or less like array.join(), except
 // that each value in the array defines its own
 // custom `delimiterText`
-function buildMessageFromSpec(sourceObj, msgSpec) {
+exports.buildMessageFromSpec = function (sourceObj, msgSpec) {
   var result = '';
 
   for (var m = 0; m < msgSpec.length; m++) {
@@ -35910,47 +35891,46 @@ function buildMessageFromSpec(sourceObj, msgSpec) {
   }
 
   return result.trim();
-}
+};
 
 /***/ }),
-/* 689 */
+/* 690 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var directives = __webpack_require__(104);
+var addPlayDirective = directives.addPlayDirective;
+var stop = directives.stop;
+var say = directives.say;
+
+var config;
 
 exports.default = function (stationConfig) {
   config = stationConfig;
   return builtIns;
 };
 
-var _directives = __webpack_require__(104);
-
-var config = void 0;
-
 var builtIns = {
   'AMAZON.HelpIntent': function AMAZONHelpIntent() {
     this.emit(':tell', config.SPOKEN_HELP);
   },
   'AMAZON.ResumeIntent': function AMAZONResumeIntent() {
-    (0, _directives.addPlayDirective)(this, config.STREAM_URL);
+    addPlayDirective(this, config.STREAM_URL);
     this.emit(':responseReady');
   },
   'Unhandled': function Unhandled() {
     this.emit(':tell', config.SPOKEN_UNHANDLED);
   },
   'AMAZON.CancelIntent': function AMAZONCancelIntent() {
-    (0, _directives.stop)(this);
+    stop(this);
   },
   'AMAZON.PauseIntent': function AMAZONPauseIntent() {
-    (0, _directives.stop)(this);
+    stop(this);
   },
   'AMAZON.StopIntent': function AMAZONStopIntent() {
-    (0, _directives.stop)(this);
+    stop(this);
   },
   'AMAZON.NextIntent': function AMAZONNextIntent() {
     cannotDoForLiveStream(this);
@@ -35973,18 +35953,20 @@ var builtIns = {
   'AMAZON.StartOverIntent': function AMAZONStartOverIntent() {
     cannotDoForLiveStream(this);
   },
-  'SessionEndedRequest': noop,
+  'SessionEndedRequest': function SessionEndedRequest() {
+    this.emit(':saveState', true);
+  },
   'PlaybackNearlyFinished': noop
 };
 
 function cannotDoForLiveStream(context) {
-  (0, _directives.say)(config.SPOKEN_ILLOGICAL);
+  say(config.SPOKEN_ILLOGICAL);
 }
 
 function noop() {}
 
 /***/ }),
-/* 690 */
+/* 691 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35997,7 +35979,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (stationConfig) {
   return {
     'LaunchRequest': function LaunchRequest() {
-      (0, _directives.addPlayDirective)(this, stationConfig.STREAM_URL);
+      directives.addPlayDirective(this, stationConfig.STREAM_URL);
       this.response.cardRenderer(stationConfig.CARD_TITLE, stationConfig.CARD_CONTENT).speak(stationConfig.SPOKEN_WELCOME || 'Welcome to ' + stationConfig.STATION_NAME);
 
       this.emit(':responseReady');
@@ -36005,7 +35987,7 @@ exports.default = function (stationConfig) {
   };
 };
 
-var _directives = __webpack_require__(104);
+var directives = __webpack_require__(104);
 
 /***/ })
 /******/ ]);
