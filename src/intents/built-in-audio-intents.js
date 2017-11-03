@@ -24,11 +24,9 @@ const builtIns = {
   'AMAZON.ShuffleOnIntent': function () { cannotDoForLiveStream(this) },
   'AMAZON.ShuffleOffIntent': function () { cannotDoForLiveStream(this) },
   'AMAZON.StartOverIntent': function () { cannotDoForLiveStream(this) },
-  'PlaybackNearlyFinished': noop
+  'PlaybackNearlyFinished': function () {}
 }
 
 function cannotDoForLiveStream (context) {
   say(context, config.SPOKEN_ILLOGICAL)
 }
-
-function noop () {}
