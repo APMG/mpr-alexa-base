@@ -14,7 +14,6 @@ const createLambdaHandler = function (config, handlers) {
     if (config.DYNAMODB_TABLE_NAME) {
       alexa.dynamoDBTableName = config.DYNAMODB_TABLE_NAME
     }
-    console.log('dynamo table', alexa.dynamoDBTableName)
     alexa.execute()
   }
 }
