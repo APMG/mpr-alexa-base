@@ -46,7 +46,7 @@ const builtIns = {
 }
 
 function cannotDoForLiveStream (context) {
-  say(config.SPOKEN_ILLOGICAL)
+  say(context, config.SPOKEN_ILLOGICAL)
 }
 
 function noop () {}
