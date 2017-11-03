@@ -1,7 +1,7 @@
 // This accepts an array of APIMessageFragments and
 // behaves more or less like array.join(), except
 // that each value in the array defines its own
-// custom `delimiterText`
+// custom `beforeText` and/or `afterText`
 exports.buildMessageFromSpec = function (sourceObj, msgSpec) {
   let result = ''
 
@@ -11,9 +11,13 @@ exports.buildMessageFromSpec = function (sourceObj, msgSpec) {
 
     if (typeof fragmentValue !== 'undefined' && fragmentValue.length) {
       if (result.length) {
-        result += ' ' + spec.delimiterText + ' '
+        result += ' ' + spec.beforeText + ' '
       }
       result += sourceObj[spec.key]
+
+      if (spec.afterText && spec.afterText.length) {
+        result += ' ' + spec.afterText
+      }
     }
   }
 
