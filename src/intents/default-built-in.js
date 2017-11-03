@@ -11,6 +11,14 @@ exports.default = function (stationConfig) {
 }
 
 const builtIns = {
+  'LaunchRequest': function () {
+    directives.addPlayDirective(this, config.STREAM_URL)
+    this.response
+      .cardRenderer(config.CARD_TITLE, config.CARD_CONTENT)
+      .speak(config.SPOKEN_WELCOME || 'Welcome to ' + config.STATION_NAME)
+
+    this.emit(':responseReady')
+  },
   'AMAZON.HelpIntent': function () {
     this.emit(':tell', config.SPOKEN_HELP)
   },
