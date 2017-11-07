@@ -3,10 +3,27 @@ var got = require('got')
 var speechBuilder = require('../speech-builder')
 
 var config
+// This is just a default for The Current
+var messageSpec = [
+  {
+    beforeText: 'the song',
+    key: 'title'
+  },
+  {
+    beforeText: 'by',
+    key: 'artist'
+  },
+  {
+    beforeText: 'from the album',
+    key: 'album'
+  }
+]
 
-exports.default = function (stationConfig) {
+exports.default = function (stationConfig, customMessageSpec) {
   config = stationConfig
-
+  if (customMessageSpec) {
+    messageSpec = customMessageSpec
+  }
   return {
     'AskSongIntent': function () {
       return got(config.NOW_PLAYING_URL + '/playlist')
@@ -27,20 +44,6 @@ const handler = function (response) {
     return
   }
 
-  const messageSpec = [
-    {
-      beforeText: 'the song',
-      key: 'title'
-    },
-    {
-      beforeText: 'by',
-      key: 'artist'
-    },
-    {
-      beforeText: 'from the album',
-      key: 'album'
-    }
-  ]
   let songDesc = speechBuilder.buildMessageFromSpec(songs[0], messageSpec)
 
   this.emit(

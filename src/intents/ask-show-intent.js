@@ -6,7 +6,7 @@ var arrayToSentence = util.arrayToSentence
 
 var config
 
-export default function (stationConfig, handler, error) {
+exports.default = function (stationConfig, handler, error) {
   config = stationConfig
   return {
     'AskShowIntent': function () {
