@@ -1,4 +1,5 @@
 module.exports = {
+  isSerial: false,
   currentEpisodeGuid: 'http://www.thecurrent.org/feature/2017/11/08/re-tros-at-mosp-here',
   categories: [ 'Music' ],
   title: 'Song of the Day',

@@ -20,7 +20,6 @@ exports.default = function (config) {
       got(url).then(
         function (res) {
           parsePodcast(res.body, function (err, data) {
-            console.log(data.episodes[0].enclosure)
             var episode = data.episodes[0]
             directives.addPlayDirective(this, episode.enclosure.url)
           })

@@ -1,4 +1,4 @@
-var podcaster = require('../src/intents/podcaster')
+var podcaster = require('../src/podcaster')
 var podcastFixture = require('./fixtures/podcast')
 
 var mockEmit = jest.fn()
@@ -10,49 +10,152 @@ var mockResponse = {
   audioPlayerPlay: jest.fn(function () { return this })
 }
 
-var mockHandler = {
-  attributes: {
-    podcast: {
-      isSerial: false,
-      currentPodcastIndex: 0,
-      data: [
-        podcastFixture
-      ]
-    }
-  },
-  response: mockResponse,
-  event: {
-    request: {
-      offsetInMilliseconds: mockReceivedOffset
-    }
-  },
-  emit: mockEmit
-}
-
 describe('Podcaster Test', function () {
-  it('resumes playing', function () {
-    let handler = getMockHandler()
-    podcaster(handler).resume()
-    expect(mockResponse.speak).toHaveBeenCalled()
-    let targetEp = handler.attributes.podcast.data[0].episodes[0]
-    expect(mockResponse.audioPlayerPlay).toHaveBeenCalledWith(
-      'REPLACE_ALL',
-      targetEp.enclosure.url,
-      '1',
-      null,
-      targetEp.playtime
-    )
+  var handler
+
+  beforeEach(function () {
+    handler = getMockHandler()
   })
+
+  it('resumes playing', function () {
+    podcaster(handler).resume()
+    expectPlayEpisodeAtIndex(handler, 0)
+  })
+
   it('stops', function () {
-    let handler = getMockHandler()
     podcaster(handler).stop()
     expect(mockResponse.audioPlayerClearQueue).toHaveBeenCalled()
     expect(mockEmit).toHaveBeenCalledWith(':responseReady')
-    let targetEp = handler.attributes.podcast.data[0].episodes[0]
+    let targetEp = episodeAtIndex(handler, 0)
     expect(targetEp.playtime).toEqual(mockReceivedOffset)
+  })
+
+  it('starts episode over', function () {
+    podcaster(handler).startOver()
+    let targetEp = episodeAtIndex(handler, 0)
+    expectPlayEpisode(targetEp)
+    expect(targetEp.playtime).toEqual(0)
+  })
+
+  it('plays serial podcast from start', function () {
+    handler.attributes.podcasts.data[0].isSerial = true
+    podcaster(handler).playPodcastFromStart()
+    let firstEpIndex = handler.attributes.podcasts.data[0].episodes.length - 1
+    expectPlayEpisodeAtIndex(handler, firstEpIndex)
+  })
+
+  it('plays the "next" episode for non-serial podcast', function () {
+    handler.attributes.podcasts.data[0].isSerial = false
+    handler.attributes.podcasts.data[0].currentEpisodeGuid = 'http://www.thecurrent.org/feature/2017/11/08/re-tros-at-mosp-here'
+    podcaster(handler).next()
+    expectPlayEpisodeAtIndex(handler, 1)
+  })
+
+  it('plays the "next" episode for serial podcasts', function () {
+    handler.attributes.podcasts.data[0].isSerial = true
+    handler.attributes.podcasts.data[0].currentEpisodeGuid = 'http://www.thecurrent.org/feature/2017/11/06/shout-out-louds-porcelain'
+    podcaster(handler).next()
+    expectPlayEpisodeAtIndex(handler, 1)
+  })
+
+  it('plays the "previous" episode for non-serial podcast', function () {
+    handler.attributes.podcasts.data[0].currentEpisodeGuid = 'http://www.thecurrent.org/feature/2017/11/06/shout-out-louds-porcelain'
+    podcaster(handler).previous()
+    expectPlayEpisodeAtIndex(handler, 1)
+  })
+
+  it('plays the "previous" episode for serial podcast', function () {
+    handler.attributes.podcasts.data[0].isSerial = true
+    let targetEp = episodeAtIndex(handler, 1)
+    podcaster(handler).next()
+    expectPlayEpisode(targetEp)
+  })
+
+  it('turns loop mode on', function () {
+    handler.attributes.podcasts.data[0].isLooping = false
+    podcaster(handler).turnLoopModeOn()
+    expect(handler.attributes.podcasts.data[0].isLooping).toEqual(true)
+    expect(podcaster(handler).isLooping()).toEqual(true)
+  })
+
+  it('turns loop mode off', function () {
+    handler.attributes.podcasts.data[0].isLooping = true
+    podcaster(handler).turnLoopModeOff()
+    expect(handler.attributes.podcasts.data[0].isLooping).toEqual(false)
+    expect(podcaster(handler).isLooping()).toEqual(false)
+  })
+
+  it('reads isLooping as false even when undefined', function () {
+    delete handler.attributes.podcasts.data[0].isLooping
+    expect(podcaster(handler).isLooping()).toEqual(false)
+  })
+
+  it('enqueues the next episode for non-serial podcast', function () {
+    handler.attributes.podcasts.data[0].isSerial = false
+    handler.attributes.podcasts.data[0].currentEpisodeGuid = 'http://www.thecurrent.org/feature/2017/11/08/re-tros-at-mosp-here'
+    podcaster(handler).enqueueNext()
+    expectPlayEpisodeAtIndex(handler, 1, 'REPLACE_ENQUEUED')
+  })
+
+  it('enqueues the next episode for serial podcast', function () {
+    handler.attributes.podcasts.data[0].isSerial = true
+    handler.attributes.podcasts.data[0].currentEpisodeGuid = 'http://www.thecurrent.org/feature/2017/11/06/shout-out-louds-porcelain'
+    podcaster(handler).enqueueNext()
+    expectPlayEpisodeAtIndex(handler, 1, 'REPLACE_ENQUEUED')
+  })
+
+  it('repeats the current podcast if looping is on', function () {
+    handler.attributes.podcasts.data[0].currentEpisodeGuid = 'http://www.thecurrent.org/feature/2017/11/08/re-tros-at-mosp-here'
+    podcaster(handler).turnLoopModeOn()
+    podcaster(handler).enqueueNext()
+    expectPlayEpisodeAtIndex(handler, 0, 'REPLACE_ENQUEUED')
+  })
+
+  it('plays the latest episode', function () {
+    podcaster(handler).playLatest()
+    expectPlayEpisodeAtIndex(handler, 0)
   })
 })
 
+function episodeAtIndex (handler, index) {
+  return handler.attributes.podcasts.data[0].episodes[index]
+}
+
+function expectPlayEpisodeAtIndex (handler, index, playBehavior) {
+  let episode = episodeAtIndex(handler, index)
+  expectPlayEpisode(episode, playBehavior)
+}
+
+function expectPlayEpisode (episode, behavior) {
+  let expectedMsg = 'Now playing ' + episode.title + ' from ' + podcastFixture.title
+  expect(mockResponse.speak).toHaveBeenCalledWith(expectedMsg)
+  expect(mockResponse.audioPlayerPlay).toHaveBeenCalledWith(
+    behavior || 'REPLACE_ALL',
+    episode.enclosure.url,
+    '1',
+    null,
+    episode.playtime
+  )
+  expect(mockEmit).toHaveBeenCalledWith(':responseReady')
+}
+
 function getMockHandler (override) {
-  return Object.assign(mockHandler, override)
+  var mockHandler = {
+    attributes: {
+      podcasts: {
+        currentPodcastIndex: 0,
+        data: [
+          podcastFixture
+        ]
+      }
+    },
+    response: mockResponse,
+    event: {
+      request: {
+        offsetInMilliseconds: mockReceivedOffset
+      }
+    },
+    emit: mockEmit
+  }
+  return Object.assign({}, mockHandler, override)
 }
