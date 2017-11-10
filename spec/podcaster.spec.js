@@ -37,6 +37,11 @@ describe('Podcaster Test', function () {
     expect(targetEp.playtime).toEqual(0)
   })
 
+  it('plays non-serial podcast from start', function () {
+    podcaster(handler).playPodcastFromStart()
+    expectPlayEpisodeAtIndex(handler, 0)
+  })
+
   it('plays serial podcast from start', function () {
     handler.attributes.podcasts.data[0].isSerial = true
     podcaster(handler).playPodcastFromStart()
@@ -69,6 +74,20 @@ describe('Podcaster Test', function () {
     let targetEp = episodeAtIndex(handler, 1)
     podcaster(handler).next()
     expectPlayEpisode(targetEp)
+  })
+
+  it('resumes on playOrResume when an existing episode is present', function () {
+    handler.attributes.podcasts.data[0].isSerial = false
+    handler.attributes.podcasts.data[0].currentEpisodeGuid = 'http://www.thecurrent.org/feature/2017/11/06/shout-out-louds-porcelain'
+    podcaster(handler).playOrResume()
+    expectPlayEpisodeAtIndex(handler, 2)
+  })
+
+  it('plays from start on playOrResume when no existing episode is present', function () {
+    handler.attributes.podcasts.data[0].isSerial = false
+    delete handler.attributes.podcasts.data[0].currentEpisodeGuid
+    podcaster(handler).playOrResume()
+    expectPlayEpisodeAtIndex(handler, 0)
   })
 
   it('turns loop mode on', function () {
@@ -115,6 +134,27 @@ describe('Podcaster Test', function () {
     podcaster(handler).playLatest()
     expectPlayEpisodeAtIndex(handler, 0)
   })
+
+  it('sets the current podcast when it exists', function () {
+    delete handler.attributes.podcasts.currentPodcastIndex
+    podcaster(handler).setCurrentPodcast(podcastFixture.feedUrl)
+    expect(handler.attributes.podcasts.currentPodcastIndex).toEqual(0)
+  })
+
+  it('keeps a record of played tracks', function () {
+    handler.attributes.podcasts.data[0].isLooping = false
+    handler.attributes.podcasts.data[0].isSerial = false
+    delete handler.attributes.podcasts.data[0].currentEpisodeGuid
+    delete handler.attributes.podcasts.playRecord
+
+    podcaster(handler).playPodcastFromStart()
+    podcaster(handler).next()
+    expect(handler.attributes.podcasts.playRecord.length).toEqual(2)
+    podcaster(handler).next()
+    expect(handler.attributes.podcasts.playRecord.length).toEqual(3)
+    var expectedCurrentRecord = 0 + '|' + handler.attributes.podcasts.data[0].episodes[2].guid
+    expect(handler.attributes.podcasts.playRecord[0]).toEqual(expectedCurrentRecord)
+  })
 })
 
 function episodeAtIndex (handler, index) {
@@ -132,7 +172,7 @@ function expectPlayEpisode (episode, behavior) {
   expect(mockResponse.audioPlayerPlay).toHaveBeenCalledWith(
     behavior || 'REPLACE_ALL',
     episode.enclosure.url,
-    '1',
+    episode.guid,
     null,
     episode.playtime
   )
@@ -140,7 +180,7 @@ function expectPlayEpisode (episode, behavior) {
 }
 
 function getMockHandler (override) {
-  var mockHandler = {
+  var mockHandler = Object.assign({}, {
     attributes: {
       podcasts: {
         currentPodcastIndex: 0,
@@ -156,6 +196,6 @@ function getMockHandler (override) {
       }
     },
     emit: mockEmit
-  }
+  })
   return Object.assign({}, mockHandler, override)
 }

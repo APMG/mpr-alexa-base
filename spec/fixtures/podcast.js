@@ -1,5 +1,6 @@
 module.exports = {
   isSerial: false,
+  feedUrl: 'https://feeds.publicradio.org/public_feeds/song-of-the-day/rss/rss.rss',
   currentEpisodeGuid: 'http://www.thecurrent.org/feature/2017/11/08/re-tros-at-mosp-here',
   categories: [ 'Music' ],
   title: 'Song of the Day',

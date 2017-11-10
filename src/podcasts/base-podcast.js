@@ -1,5 +1,5 @@
 var podcaster = require('../../podcaster')
-
+var states = require('../states')
 var config
 
 module.exports = function (stationConfig) {
@@ -12,7 +12,11 @@ module.exports = function (stationConfig) {
       this.emit(':tell', 'You can use normal audio controls, say "Play Latest", or say "Switch to Live Stream" to go back to Live Stream mode')
     },
     'AskShowIntent': tellInfo.bind(this),
-    'AskSongIntent': tellInfo.bind(this)
+    'AskSongIntent': tellInfo.bind(this),
+    'SwitchToLiveStreamIntent': function () {
+      this.handler.state = states.RADIO_STREAM
+      this.emit('LaunchIntent')
+    }
   }
 }
 

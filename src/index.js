@@ -1,5 +1,7 @@
 var Alexa = require('alexa-sdk')
 var intents = require('./intents')
+var podcaster = require('./podcaster')
+var states = require('./states')
 
 const createLambdaHandler = function (config, handlers) {
   return function (event, context, callback) {
@@ -19,5 +21,7 @@ const createLambdaHandler = function (config, handlers) {
 
 export {
   createLambdaHandler,
-  intents
+  intents,
+  podcaster,
+  states
 }

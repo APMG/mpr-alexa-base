@@ -26,6 +26,9 @@
     "jest": "^21.2.1",
     "webpack": "^3.8.1"
   },
+  "scripts": {
+    "test": "jest"
+  },
   "jest": {
     "testRegex": "(\\.(test|spec))\\.(js)$"
   }
