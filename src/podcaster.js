@@ -74,7 +74,8 @@ module.exports = function (handler) {
     },
 
     playLatest: function () {
-      this._play(this.getCurrentPodcast().episodes[0])
+      var curEp = this.getCurrentEpisode()
+      this._play(curEp.episodes[0])
     },
 
     enqueueNext: function () {
@@ -101,19 +102,16 @@ module.exports = function (handler) {
 
     setCurrentPodcast: function (podcast) {
       var feedUrl = podcast.feedUrl
-      var currentPodcastIndex
       var newCurrentPodcastIndex = handler.attributes.podcasts.data.map(function (pod) {
         return pod.feedUrl
       }).indexOf(feedUrl)
 
-      if (Number.isInteger(newCurrentPodcastIndex) && newCurrentPodcastIndex !== -1) {
-        currentPodcastIndex = newCurrentPodcastIndex
-      } else {
+      if (!Number.isInteger(newCurrentPodcastIndex) || newCurrentPodcastIndex === -1) {
         var newLength = handler.attributes.podcasts.data.push({feedUrl: feedUrl})
-        currentPodcastIndex = newLength - 1
+        newCurrentPodcastIndex = newLength - 1
       }
 
-      handler.attributes.podcasts.currentPodcastIndex = currentPodcastIndex
+      handler.attributes.podcasts.currentPodcastIndex = newCurrentPodcastIndex
       return this
     },
 
@@ -200,24 +198,23 @@ module.exports = function (handler) {
           return
         }
         var curPod = self.getCurrentPodcast()
-        var currentEps = curPod.episodes || []
-        var loadedEps = newPod.episodes
+        // var currentEps = curPod.episodes || []
 
-        loadedEps
-          // find episodes that aren't already in the episode array
-          .filter(function (loadedEp) {
-            return !currentEps.find(function (curEp) {
-              return loadedEp.guid === curEp.guid
-            })
-          })
-          // one by one add them to the beginning of the episode array
-          .reverse()
-          .map(function (newEp) {
-            currentEps.unshift(newEp)
-          })
+        // newPod.episodes
+        //   // find episodes that aren't already in the episode array
+        //   .filter(function (loadedEp) {
+        //     return !currentEps.find(function (curEp) {
+        //       return loadedEp.guid === curEp.guid
+        //     })
+        //   })
+        //   // one by one add them to the beginning of the episode array
+        //   .reverse()
+        //   .map(function (newEp) {
+        //     currentEps.unshift(newEp)
+        //   })
 
         var loadedPodcast = Object.assign({}, curPod, newPod)
-        loadedPodcast.episodes = currentEps
+        // loadedPodcast.episodes = currentEps
         loadedPodcast.lastLoad = Date.now()
         // store it on the handler
         self.setCurrentPodcast(loadedPodcast)
