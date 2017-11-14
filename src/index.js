@@ -1,6 +1,7 @@
 var Alexa = require('alexa-sdk')
 var intents = require('./intents')
 var podcaster = require('./podcaster')
+var createPodcastHandlers = require('./podcasts').default
 var states = require('./states')
 
 const createLambdaHandler = function (config, handlers) {
@@ -8,7 +9,7 @@ const createLambdaHandler = function (config, handlers) {
     var alexa = Alexa.handler(event, context, callback)
     alexa.appId = config.APP_ID
     if (Array.isArray(handlers)) {
-      alexa.registerHandlers(...handlers)
+      alexa.registerHandlers.apply(alexa, handlers)
     } else {
       alexa.registerHandlers(handlers)
     }
@@ -19,9 +20,10 @@ const createLambdaHandler = function (config, handlers) {
   }
 }
 
-export {
+module.exports = {
   createLambdaHandler,
   intents,
   podcaster,
+  createPodcastHandlers,
   states
 }

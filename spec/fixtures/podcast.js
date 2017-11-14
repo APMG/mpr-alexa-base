@@ -1,5 +1,4 @@
 module.exports = {
-  isSerial: false,
   feedUrl: 'https://feeds.publicradio.org/public_feeds/song-of-the-day/rss/rss.rss',
   currentEpisodeGuid: 'http://www.thecurrent.org/feature/2017/11/08/re-tros-at-mosp-here',
   categories: [ 'Music' ],
@@ -36,7 +35,7 @@ module.exports = {
       enclosure: {
         filesize: 4458309,
         type: 'audio/mpeg',
-        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/20171108_re_tros_at_mosp_here_128.mp3'
+        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/odesza-across-the-room.mp3'
       },
       duration: 201
     },
@@ -48,7 +47,7 @@ module.exports = {
       enclosure: {
         filesize: 4458309,
         type: 'audio/mpeg',
-        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/20171108_re_tros_at_mosp_here_128.mp3'
+        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/shout-out-louds-porcelain.mp3'
       },
       duration: 209
     },
@@ -60,7 +59,7 @@ module.exports = {
       enclosure: {
         filesize: 4458309,
         type: 'audio/mpeg',
-        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/20171108_re_tros_at_mosp_here_128.mp3'
+        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/the-nunnery-powerwalk.mp3'
       },
       duration: 173
     },
@@ -72,7 +71,7 @@ module.exports = {
       enclosure: {
         filesize: 4458309,
         type: 'audio/mpeg',
-        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/20171108_re_tros_at_mosp_here_128.mp3'
+        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/whitney-rose-better-to-my-baby.mp3'
       },
       duration: 191
     },
@@ -84,7 +83,7 @@ module.exports = {
       enclosure: {
         filesize: 4458309,
         type: 'audio/mpeg',
-        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/20171108_re_tros_at_mosp_here_128.mp3'
+        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/john-maus-touchdown.mp3'
       },
       duration: 221
     },
@@ -96,7 +95,7 @@ module.exports = {
       enclosure: {
         filesize: 4458309,
         type: 'audio/mpeg',
-        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/20171108_re_tros_at_mosp_here_128.mp3'
+        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/alex-lahey-every-days-the-weekend.mp3'
       },
       duration: 193
     },
@@ -108,7 +107,7 @@ module.exports = {
       enclosure: {
         filesize: 4458309,
         type: 'audio/mpeg',
-        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/20171108_re_tros_at_mosp_here_128.mp3'
+        url: 'https://play.podtrac.com/APM-SongOfTheDay/play.publicradio.org/rss/d/podcast/minnesota/the_current/song_of_the_day/2017/11/08/margo-price-a-little-pain.mp3'
       },
       duration: 175
     }

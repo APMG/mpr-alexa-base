@@ -2,12 +2,18 @@ var got = require('got')
 var parsePodcast = require('node-podcast-parser')
 
 module.exports = function (handler) {
-  var currentPodcastIndex = handler['attributes']['podcasts']['currentPodcastIndex']
-  var currentPodcast = handler['attributes']['podcasts']['data'][currentPodcastIndex]
+  if (!handler.attributes.podcasts) {
+    handler.attributes.podcasts = {
+      currentPodcastIndex: 0,
+      isLooping: false,
+      data: []
+    }
+  }
+
   return {
     stop: function () {
       this._setCurrentTimeToRequestOffset()
-      handler.response.audioPlayerClearQueue()
+      handler.response.audioPlayerClearQueue('CLEAR_ALL')
       handler.emit(':responseReady')
     },
 
@@ -18,12 +24,7 @@ module.exports = function (handler) {
     },
 
     playPodcastFromStart: function () {
-      var episodes = currentPodcast.episodes
-      var startEpisode = currentPodcast.isSerial
-        ? episodes[episodes.length - 1]
-        : episodes[0]
-
-      this._play(startEpisode)
+      this._play(this.getCurrentPodcast().episodes[0])
     },
 
     resume: function () {
@@ -41,16 +42,17 @@ module.exports = function (handler) {
     },
 
     turnLoopModeOn: function () {
-      handler.attributes.podcasts.data[currentPodcastIndex].isLooping = true
+      handler.attributes.podcasts.isLooping = true
+      return this
     },
 
     turnLoopModeOff: function () {
-      handler.attributes.podcasts.data[currentPodcastIndex].isLooping = false
+      handler.attributes.podcasts.isLooping = false
+      return this
     },
 
     isLooping: function () {
-      var result = handler.attributes.podcasts.data[currentPodcastIndex].isLooping
-      return Boolean(result)
+      return handler.attributes.podcasts.isLooping
     },
 
     next: function () {
@@ -72,86 +74,98 @@ module.exports = function (handler) {
     },
 
     playLatest: function () {
-      this._play(currentPodcast.episodes[0])
+      this._play(this.getCurrentPodcast().episodes[0])
     },
 
     enqueueNext: function () {
+      if (handler.attributes.podcasts.isLooping) {
+        this._loopCurrentEpisode()
+      }
       var nextEp = this._getNextEpisode()
       if (nextEp && typeof nextEp !== 'undefined') {
         this._play(nextEp, 'REPLACE_ENQUEUED')
       }
     },
 
+    getCurrentPodcast: function () {
+      var curEpIndex = handler.attributes.podcasts.currentPodcastIndex
+      return handler.attributes.podcasts.data[curEpIndex]
+    },
+
     getCurrentEpisode: function () {
-      return currentPodcast.episodes.find(function (episode) {
-        return episode.guid === currentPodcast.currentEpisodeGuid
+      var curPod = this.getCurrentPodcast()
+      return curPod.episodes.find(function (episode) {
+        return episode.guid === curPod.currentEpisodeGuid
       })
     },
 
-    getCurrentPodcast: function () {
-      return Object.assign({}, currentPodcast)
-    },
-
-    setCurrentPodcast: function (feedUrl) {
+    setCurrentPodcast: function (podcast) {
+      var feedUrl = podcast.feedUrl
+      var currentPodcastIndex
       var newCurrentPodcastIndex = handler.attributes.podcasts.data.map(function (pod) {
         return pod.feedUrl
       }).indexOf(feedUrl)
 
-      if (Number.isInteger(newCurrentPodcastIndex)) {
-        handler.attributes.podcasts.currentPodcastIndex = newCurrentPodcastIndex
+      if (Number.isInteger(newCurrentPodcastIndex) && newCurrentPodcastIndex !== -1) {
+        currentPodcastIndex = newCurrentPodcastIndex
       } else {
-        var newLength = handler.attributes.podcasts.push({feedUrl: feedUrl})
-        handler.attributes.podcasts.currentPodcastIndex = newLength - 1
+        var newLength = handler.attributes.podcasts.data.push({feedUrl: feedUrl})
+        currentPodcastIndex = newLength - 1
       }
 
-      currentPodcastIndex = handler.attributes.podcasts.currentPodcastIndex
-      currentPodcast = handler.attributes.podcasts.data[currentPodcastIndex]
-
-      this._loadNewEpisodes()
+      handler.attributes.podcasts.currentPodcastIndex = currentPodcastIndex
+      return this
     },
 
-    _play: function (episode, playBehavior) {
-      this._logPlay(episode)
-      this._updatePodcastCurrentEpisodeGuid(episode.guid)
+    loadNewEpisodes: function () {
+      return got(this.getCurrentPodcast().feedUrl)
+        .then(
+          this._loadNewEpisodesSuccess.bind(this),
+          this._loadNewEpisodesFailure.bind(this)
+        )
+    },
+
+    _play (episode, playBehavior) {
+      this._setCurrentEpisode(episode)
       handler.response
-        .speak('Now playing ' + episode.title + ' from ' + currentPodcast.title)
+        .speak('Now playing ' + episode.title + ' from ' + this.getCurrentPodcast().title)
         .audioPlayerPlay(
           playBehavior || 'REPLACE_ALL', // replace all items in the queue with the current item
           episode.enclosure.url,
           episode.guid, // a token that uniquely identifies the track
           this._getExpectedPreviousValue(playBehavior),
-          episode.playtime // where in the track to begin playing from, in milliseconds
+          episode.playtime || 0 // where in the track to begin playing from, in milliseconds
         )
       handler.emit(':responseReady')
     },
 
-    _getCurrentEpisodeIndex: function () {
-      return currentPodcast.episodes.map(function (ep) {
+    _getCurrentEpisodeIndex () {
+      var curPod = this.getCurrentPodcast()
+      return curPod.episodes.map(function (ep) {
         return ep.guid
-      }).indexOf(currentPodcast.currentEpisodeGuid)
+      }).indexOf(curPod.currentEpisodeGuid)
     },
 
-    _getPreviousEpisode: function () {
+    _getPreviousEpisode () {
       var currentEpIndex = this._getCurrentEpisodeIndex()
-      var nextEpIndex = currentPodcast.isSerial
-        ? currentEpIndex + 1
-        : currentEpIndex - 1
-
-      return currentPodcast.episodes[nextEpIndex]
+      var prevEpIndex = currentEpIndex + 1
+      return this.getCurrentPodcast().episodes[prevEpIndex]
     },
 
-    _getNextEpisode: function () {
+    _getNextEpisode () {
       var currentEpIndex = this._getCurrentEpisodeIndex()
+      var nextEpIndex = currentEpIndex - 1
+      return this.getCurrentPodcast().episodes[nextEpIndex]
+    },
 
-      if (currentPodcast.isLooping) {
-        return currentPodcast.episodes[currentEpIndex]
-      }
-
-      var nextEpIndex = currentPodcast.isSerial
-        ? currentEpIndex - 1
-        : currentEpIndex + 1
-
-      return currentPodcast.episodes[nextEpIndex]
+    _loopCurrentEpisode () {
+      var currentEpIndex = this._getCurrentEpisodeIndex()
+      var curEp = Object.assign({}, this.getCurrentPodcast().episodes[currentEpIndex])
+      // set playtime to 0 so that it doesn't
+      // start playing from wherever the current
+      // episode might have last been stopped / saved
+      curEp.playtime = 0
+      this._play(curEp, 'REPLACE_ENQUEUED')
     },
 
     _setCurrentTimeToRequestOffset () {
@@ -160,28 +174,33 @@ module.exports = function (handler) {
     },
 
     _updateEpisodePlaytime (newTime) {
+      var currentPodcast = this.getCurrentPodcast()
       var currentEpisode = this.getCurrentEpisode()
       currentEpisode.playtime = newTime
       currentPodcast.episodes[this._getCurrentEpisodeIndex()] = currentEpisode
-      handler.attributes.podcasts.data[currentPodcastIndex] = currentPodcast
+      this.setCurrentPodcast(currentPodcast)
     },
 
-    _updatePodcastCurrentEpisodeGuid (newGuid) {
-      handler.attributes.podcasts.data[currentPodcastIndex].currentEpisodeGuid = newGuid
+    _setCurrentEpisode (episode) {
+      var curPodIndex = handler.attributes.podcasts.currentPodcastIndex
+      handler.attributes.podcasts.data[curPodIndex].guid = episode.guid
     },
 
-    _loadNewEpisodes: function () {
-      got(currentPodcast.feedUrl)
-        .then(this._loadNewEpisodesSuccess.bind(this))
+    _loadNewEpisodesFailure (err) {
+      this.emit(':tell', 'Sorry, there was an error retrieving the podcast data')
+      return false
     },
 
-    _loadNewEpisodesSuccess: function (res) {
+    _loadNewEpisodesSuccess (res) {
+      var self = this
       parsePodcast(res.body, function (err, newPod) {
         if (err) {
+          console.error(err)
           handler.emit(':tell', 'Sorry, there was an error reading the podcast data')
           return
         }
-        var currentEps = currentPodcast.episodes
+        var curPod = self.getCurrentPodcast()
+        var currentEps = curPod.episodes || []
         var loadedEps = newPod.episodes
 
         loadedEps
@@ -197,41 +216,40 @@ module.exports = function (handler) {
             currentEps.unshift(newEp)
           })
 
-        var loadedPodcast = Object.assign({}, currentPodcast, newPod)
+        var loadedPodcast = Object.assign({}, curPod, newPod)
         loadedPodcast.episodes = currentEps
+        loadedPodcast.lastLoad = Date.now()
         // store it on the handler
-        handler.attributes.podcasts.data[currentPodcastIndex] = loadedPodcast
+        self.setCurrentPodcast(loadedPodcast)
       })
+      return true
     },
 
-    _getExpectedPreviousValue: function (playBehavior) {
-      if (playBehavior === 'REPLACE_ALL') {
+    _getExpectedPreviousValue (playBehavior) {
+      // this value is not required
+      // when play behavior is "REPLACE_ALL"
+      // which happens to be our default
+      if (!playBehavior || playBehavior === 'REPLACE_ALL') {
         return null
       }
 
-      var playRecord = handler.attributes.podcasts.playRecord
+      var prevEp = this._getPreviousEpisode()
 
-      if (!playRecord || typeof playRecord === 'undefined' || playRecord.length === 0) {
+      if (prevEp && typeof prevEp !== 'undefined') {
+        return prevEp.guid
+      } else {
         return null
       }
-
-      return playRecord[1] || null
     },
 
-    _logPlay: function (episode) {
-      // This is only a record of the order in which items have been
-      // played so we are using the podcast index and episode guid
-      // to create a unique identifying string that can also help
-      // us locate the episode if for some reason we ever need to
-      var playRecord = handler.attributes.podcasts.playRecord || []
-      var newRecord = currentPodcastIndex + '|' + episode.guid
-      // Add the ep to the record if it's not already the
-      // most recently played item.
-      if (playRecord[0] !== newRecord) {
-        playRecord.unshift(newRecord)
-      }
+    _recordCurrentEpisodePlayed () {
+      var currentEp = this.getCurrentEpisode()
+      var currentPod = this.getCurrentPodcast()
+      var currentPodIndex = handler.attributes.podcasts.currentPodcastIndex
+      var playRecord = currentPod.playRecord || []
 
-      handler.attributes.podcasts.playRecord = playRecord
+      playRecord.push(currentEp.guid)
+      handler.attributes.podcasts.data[currentPodIndex].playRecord = playRecord
     }
   }
 }

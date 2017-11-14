@@ -1,4 +1,4 @@
-var podcaster = require('../../podcaster')
+var podcaster = require('../podcaster')
 var states = require('../states')
 var config
 
@@ -6,16 +6,24 @@ module.exports = function (stationConfig) {
   config = stationConfig
   return {
     'LaunchRequest': function () {
-      podcaster(this).resume()
+      podcaster(this).playLatest()
     },
     'AMAZON.HelpIntent': function () {
-      this.emit(':tell', 'You can use normal audio controls, say "Play Latest", or say "Switch to Live Stream" to go back to Live Stream mode')
+      this.emit(':tell', 'You can play, pause, navigate back through older episodes, or say "Switch to Live Stream" to go back to Live Stream mode')
     },
     'AskShowIntent': tellInfo.bind(this),
     'AskSongIntent': tellInfo.bind(this),
     'SwitchToLiveStreamIntent': function () {
       this.handler.state = states.RADIO_STREAM
       this.emit('LaunchIntent')
+    },
+    'Unhandled': function () {
+      this.emit(':tell', 'Sorry, I don\'t understand.')
+    },
+    'SongOfTheDayIntent': function () {
+      var feedUrl = 'https://feeds.publicradio.org/public_feeds/song-of-the-day/rss/rss.rss'
+      this.handler.state = states.PODCAST
+      podcaster(this).setCurrentPodcast(feedUrl)
     }
   }
 }

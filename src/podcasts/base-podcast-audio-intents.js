@@ -1,18 +1,20 @@
-var podcaster = require('../../podcaster')
-var cannotShuffleText = "Sorry, I can't shuffle a podcast"
+var podcaster = require('../podcaster')
+var states = require('../states')
+var cannotShuffleText = 'Sorry, I can\'t shuffle a podcast'
+var cannotYetDo = 'Sorry, I can\'t do that yet'
 
 module.exports = function () {
   return {
     'AMAZON.ResumeIntent': function () { podcaster(this).resume() },
     'AMAZON.PauseIntent': function () { podcaster(this).stop() },
     'AMAZON.StopIntent': function () { podcaster(this).stop() },
-    'AMAZON.NextIntent': function () { podcaster(this).next() },
-    'AMAZON.PreviousIntent': function () { podcaster(this).previous() },
-    'AMAZON.LoopOnIntent': function () { podcaster(this).turnLoopModeOn() },
-    'AMAZON.LoopOffIntent': function () { podcaster(this).turnLoopModeOff() },
+    'AMAZON.NextIntent': function () { this.emit(':tell', cannotYetDo) },
+    'AMAZON.PreviousIntent': function () { this.emit(':tell', cannotYetDo) },
+    'AMAZON.LoopOnIntent': function () { this.emit(':tell', cannotYetDo) },
+    'AMAZON.LoopOffIntent': function () { this.emit(':tell', cannotYetDo) },
     'AMAZON.ShuffleOnIntent': function () { this.emit(':tell', cannotShuffleText) },
     'AMAZON.ShuffleOffIntent': function () { this.emit(':tell', cannotShuffleText) },
     'AMAZON.StartOverIntent': function () { podcaster(this).startOver() },
-    'PlaybackNearlyFinished': function () { podcaster(this).enqueueNext() }
+    'PlaybackNearlyFinished': function () { this.handler.state = states.RADIO_STREAM }
   }
 }
