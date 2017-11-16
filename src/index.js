@@ -3,6 +3,7 @@ var intents = require('./intents')
 var podcaster = require('./podcaster')
 var createPodcastHandlers = require('./podcasts').default
 var states = require('./states')
+var user = require('./user')
 
 const createLambdaHandler = function (config, handlers) {
   return function (event, context, callback) {
@@ -25,5 +26,6 @@ module.exports = {
   intents,
   podcaster,
   createPodcastHandlers,
-  states
+  states,
+  user
 }

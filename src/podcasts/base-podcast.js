@@ -1,5 +1,5 @@
 var podcaster = require('../podcaster')
-var states = require('../states')
+// var states = require('../states')
 var config
 
 module.exports = function (stationConfig) {
@@ -14,15 +14,15 @@ module.exports = function (stationConfig) {
     'AskShowIntent': tellInfo.bind(this),
     'AskSongIntent': tellInfo.bind(this),
     'SwitchToLiveStreamIntent': function () {
-      this.handler.state = states.RADIO_STREAM
-      this.emit('LaunchIntent')
+      this.handler.state = ''
+      this.emitWithState('LaunchRequest')
     },
     'Unhandled': function () {
       this.emit(':tell', 'Sorry, I don\'t understand.')
     },
     'SongOfTheDayIntent': function () {
       var feedUrl = 'https://feeds.publicradio.org/public_feeds/song-of-the-day/rss/rss.rss'
-      this.handler.state = states.PODCAST
+      // this.handler.state = states.PODCAST
       podcaster(this).setCurrentPodcast(feedUrl)
     }
   }

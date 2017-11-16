@@ -74,7 +74,7 @@ module.exports = function (handler) {
     },
 
     playLatest: function () {
-      var curEp = this.getCurrentEpisode()
+      var curEp = this.getCurrentPodcast()
       this._play(curEp.episodes[0])
     },
 
@@ -112,6 +112,8 @@ module.exports = function (handler) {
       }
 
       handler.attributes.podcasts.currentPodcastIndex = newCurrentPodcastIndex
+      handler.attributes.podcasts.data[newCurrentPodcastIndex] = podcast
+      console.log(this.getCurrentPodcast())
       return this
     },
 
@@ -124,16 +126,15 @@ module.exports = function (handler) {
     },
 
     _play (episode, playBehavior) {
-      this._setCurrentEpisode(episode)
-      handler.response
-        .speak('Now playing ' + episode.title + ' from ' + this.getCurrentPodcast().title)
-        .audioPlayerPlay(
-          playBehavior || 'REPLACE_ALL', // replace all items in the queue with the current item
-          episode.enclosure.url,
-          episode.guid, // a token that uniquely identifies the track
-          this._getExpectedPreviousValue(playBehavior),
-          episode.playtime || 0 // where in the track to begin playing from, in milliseconds
-        )
+      // this._setCurrentEpisode(episode)
+      handler.response.speak('Now playing "' + episode.title + '" from ' + this.getCurrentPodcast().title)
+      handler.response.audioPlayerPlay(
+        'REPLACE_ALL', // playBehavior || 'REPLACE_ALL', // replace all items in the queue with the current item
+        episode.enclosure.url,
+        episode.guid, // a token that uniquely identifies the track
+        null, // this._getExpectedPreviousValue(playBehavior),
+        episode.playtime || 0 // where in the track to begin playing from, in milliseconds
+      )
       handler.emit(':responseReady')
     },
 
@@ -172,11 +173,11 @@ module.exports = function (handler) {
     },
 
     _updateEpisodePlaytime (newTime) {
-      var currentPodcast = this.getCurrentPodcast()
-      var currentEpisode = this.getCurrentEpisode()
-      currentEpisode.playtime = newTime
-      currentPodcast.episodes[this._getCurrentEpisodeIndex()] = currentEpisode
-      this.setCurrentPodcast(currentPodcast)
+      // var currentPodcast = this.getCurrentPodcast()
+      // var currentEpisode = this.getCurrentEpisode()
+      // currentEpisode.playtime = newTime
+      // currentPodcast.episodes[this._getCurrentEpisodeIndex()] = currentEpisode
+      // this.setCurrentPodcast(currentPodcast)
     },
 
     _setCurrentEpisode (episode) {

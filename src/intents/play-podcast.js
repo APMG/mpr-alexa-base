@@ -1,5 +1,5 @@
 var podcaster = require('../podcaster')
-var states = require('../states')
+// var states = require('../states')
 var config
 
 exports.default = function (stationConfig) {
@@ -19,7 +19,7 @@ exports.default = function (stationConfig) {
 }
 
 function playRequestedPodcast () {
-  this.handler.state = states.PODCAST
+  // this.handler.state = states.PODCAST
   var podcastName = this.event.request.intent.slots.Podcast.value
   var requestedPodcast = config.PODCASTS.find(function (podcast) {
     return podcast.name === podcastName
