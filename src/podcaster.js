@@ -12,7 +12,7 @@ module.exports = function (handler) {
 
   return {
     stop: function () {
-      this._setCurrentTimeToRequestOffset()
+      // this._setCurrentTimeToRequestOffset()
       handler.response.audioPlayerClearQueue('CLEAR_ALL')
       handler.emit(':responseReady')
     },
@@ -113,7 +113,6 @@ module.exports = function (handler) {
 
       handler.attributes.podcasts.currentPodcastIndex = newCurrentPodcastIndex
       handler.attributes.podcasts.data[newCurrentPodcastIndex] = podcast
-      console.log(this.getCurrentPodcast())
       return this
     },
 
@@ -133,7 +132,7 @@ module.exports = function (handler) {
         episode.enclosure.url,
         episode.guid, // a token that uniquely identifies the track
         null, // this._getExpectedPreviousValue(playBehavior),
-        episode.playtime || 0 // where in the track to begin playing from, in milliseconds
+        0 // where in the track to begin playing from, in milliseconds
       )
       handler.emit(':responseReady')
     },
