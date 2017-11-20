@@ -5,7 +5,7 @@ var apiUrl = 'https://accounts.publicradio.org/api/v1/'
 
 module.exports = function (handler) {
   return {
-    getToken: function () {
+    getToken: function (customMsg) {
       var token = get(handler, 'event.session.user.accessToken')
 
       if (token) {
@@ -15,7 +15,7 @@ module.exports = function (handler) {
       var defaultMsg = 'You need to link your APM account to this skill before you can do that'
       handler.emit(
         ':tellWithLinkAccountCard',
-        handler.tokenMissingMsg || defaultMsg
+        customMsg || defaultMsg
       )
 
       // If a client function receives this `false` response here, it should
@@ -24,7 +24,7 @@ module.exports = function (handler) {
       // ~EMN
       return false
     },
-    getUser: function () {
+    getUser: function (handleSuccess, handleError) {
       var token = this.getToken(this)
 
       if (!token) { return } // cease lambda execution immediately
@@ -41,7 +41,7 @@ module.exports = function (handler) {
 
         var url = apiUrl + 'me'
 
-        return got(url, requestConfig)
+        got(url, requestConfig).then(handleSuccess, handleError)
       }
     }
   }
