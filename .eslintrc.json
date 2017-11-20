@@ -1,13 +1,15 @@
 {
   "parser": "babel-eslint",
   "extends": [
-    "standard",
-    "plugin:flowtype/recommended"
+    "standard"
   ],
   "plugins": [
-    "flowtype"
+    "jest"
   ],
   "rules": {
     "handle-callback-err": 0
+  },
+  "env": {
+    "jest/globals": true
   }
 }

@@ -1580,6 +1580,10 @@ eslint-plugin-flowtype@^2.39.1:
   dependencies:
     lodash "^4.15.0"
 
+eslint-plugin-jest@^21.2.0:
+  version "21.2.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-21.2.0.tgz#292044df9cf0866ad9c530e78e6528fae287b926"
+
 eslint-scope@^3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-3.7.1.tgz#3d63c3edfda02e06e01a452ad88caacc7cdcb6e8"
@@ -1587,9 +1591,9 @@ eslint-scope@^3.7.1:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint@^4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.9.0.tgz#76879d274068261b191fe0f2f56c74c2f4208e8b"
+eslint@^4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.10.0.tgz#f25d0d7955c81968c2309aa5c9a229e045176bb7"
   dependencies:
     ajv "^5.2.0"
     babel-code-frame "^6.22.0"
@@ -2899,6 +2903,10 @@ lodash.isfunction@^3.0.8:
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/lodash.isfunction/-/lodash.isfunction-3.0.8.tgz#4db709fc81bc4a8fd7127a458a5346c5cdce2c6b"
 
+lodash@4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.2.1.tgz#171fdcfbbc30d689c544cd18c0529f56de6c1aa9"
+
 lodash@^4.0.0, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
@@ -3127,6 +3135,13 @@ node-notifier@^5.0.2:
     semver "^5.3.0"
     shellwords "^0.1.0"
     which "^1.2.12"
+
+node-podcast-parser@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/node-podcast-parser/-/node-podcast-parser-2.0.0.tgz#bcfd75719983199c947079ab067e05e981050bde"
+  dependencies:
+    lodash "4.2.1"
+    sax "1.1.5"
 
 node-pre-gyp@^0.6.36:
   version "0.6.38"
@@ -3813,6 +3828,10 @@ sane@^2.0.0:
     watch "~0.18.0"
   optionalDependencies:
     fsevents "^1.1.1"
+
+sax@1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/sax/-/sax-1.1.5.tgz#1da50a8d00cdecd59405659f5ff85349fe773743"
 
 sax@1.2.1:
   version "1.2.1"
