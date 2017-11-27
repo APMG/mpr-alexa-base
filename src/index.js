@@ -7,8 +7,11 @@ const createLambdaHandler = function (config, handlers) {
   return function (event, context, callback) {
     var alexa = Alexa.handler(event, context, callback)
     alexa.appId = config.APP_ID
-    // for state-specific handlers, not currently used
+
     if (Array.isArray(handlers)) {
+      // you can pass in an array of state-specific
+      // handlers if you wish to use multiple states,
+      // but this is not currently used anywhere
       alexa.registerHandlers.apply(alexa, handlers)
     } else {
       alexa.registerHandlers(handlers)

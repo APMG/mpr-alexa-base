@@ -2,7 +2,7 @@
 
 This project serves as the base to Alexa skills created for the three main MPR stations: MPR News, Classical MPR, and The Current.
 
-It provides standard handlers and audio handlers by default, as well as a few intents that are shared by at least two of the three stations.
+It provides standard handlers and audio handlers by default, as well as a few intents that are shared by at least two of the three stations. It was created essentially by creating a few Alexa skills, and then extracting common functionality into a reusable library.
 
 ## Sample Usage
 
