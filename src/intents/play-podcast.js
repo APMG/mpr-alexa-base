@@ -1,8 +1,10 @@
 var podcaster = require('../podcaster')
-// var states = require('../states')
 var config
 
-exports.default = function (stationConfig) {
+// Play a podcast configured in the skill's
+// `config.js` and interaction model
+
+module.exports = function (stationConfig) {
   config = stationConfig
 
   return {
@@ -19,7 +21,6 @@ exports.default = function (stationConfig) {
 }
 
 function playRequestedPodcast () {
-  // this.handler.state = states.PODCAST
   var podcastName = this.event.request.intent.slots.Podcast.value
   var requestedPodcast = config.PODCASTS.find(function (podcast) {
     return podcast.name === podcastName

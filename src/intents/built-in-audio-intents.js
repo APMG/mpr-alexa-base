@@ -5,7 +5,10 @@ var say = directives.say
 
 var config
 
-exports.default = function (stationConfig) {
+// Intents that are necessary to handle gracefully
+// to use Alexa's AudioPlayer Interface
+
+module.exports = function (stationConfig) {
   config = stationConfig
   return builtIns
 }

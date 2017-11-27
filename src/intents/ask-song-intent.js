@@ -3,6 +3,9 @@ var got = require('got')
 var speechBuilder = require('../speech-builder')
 
 var config
+
+// Ask the skill what song is currently on the live stream
+
 // This is just a default for The Current
 var messageSpec = [
   {
@@ -19,7 +22,7 @@ var messageSpec = [
   }
 ]
 
-exports.default = function (stationConfig, customMessageSpec) {
+module.exports = function (stationConfig, customMessageSpec) {
   config = stationConfig
   if (customMessageSpec) {
     messageSpec = customMessageSpec

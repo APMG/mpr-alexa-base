@@ -1,22 +1,30 @@
 # MPR Alexa Base
 
-Use this to rapidly generate lambda code for Alexa Skills that stream audio from MPR.
+This project serves as the base to Alexa skills created for the three main MPR stations: MPR News, Classical MPR, and The Current.
 
-To start a new project, copy and paste the code from inside the `skeleton-sample` directory, run `yarn install` then update the `config.js` values to correspond to your streaming service.
+It provides standard handlers and audio handlers by default, as well as a few intents that are shared by at least two of the three stations.
 
-## Customizing Handlers
-To customize handlers, call `getIntentHandlers()` (with an optional config parameter), add / remove / alter handlers as necessary, then pass them in as a parameter to `createLambdaHandler`. E.g.,
+## Sample Usage
 
 ```javascript
-  import config from './config'
-  import mprAlexaBase from 'mpr-alexa-base'
+var config = require('./config')
+var alexaBase = require('mpr-alexa-base')
+var intents = alexaBase.intents
+var createLambdaHandler = alexaBase.createLambdaHandler
 
-  let handlers = mprAlexaBase.getIntentHandlers(config)
-  // ... do stuff with handlers ...
-  exports.handler = mprAlexaBase.createLambdaHandler(handlers)
+let handlers = Object.assign(
+  intents.defaultBuiltIns(config),
+  intents.builtInAudio(config),
+  intents.askSong(config),
+  intents.askShow(config),
+  intents.playPodcast(config)
+  // ... add any other custom intent handlers here ...
+)
+
+exports.handler = createLambdaHandler(config, handlers)
 ```
 
 ## Deployment
-Then run `yarn run deploy` to generate a file called `alexa-bundle.zip` that is ready to be uploaded to Lambda.
+To get quickly up and running with the base intents plus `AskSongIntent` and `AskShowIntent`, you may copy and paste the contents of `skeleton-sample/intents.json` into the Alexa skill builder interaction model "Code" window.
 
-You should be able to drop the `intents.json` file from the skeleton code right into the code editor on the interaction model builder. Click "Build Model" then "Save Model"
+From within a skill using this base, run `yarn run deploy` (defined in the `skeleton-sample` to generate a file called `alexa-bundle.zip` that is ready to be uploaded to Lambda.

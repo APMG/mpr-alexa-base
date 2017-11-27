@@ -1,7 +1,10 @@
 var directives = require('../directives')
 var config
 
-exports.default = function (stationConfig) {
+// Built-in Alexa intents that all skills need
+// to handle gracefully
+
+module.exports = function (stationConfig) {
   config = stationConfig
   return builtIns
 }

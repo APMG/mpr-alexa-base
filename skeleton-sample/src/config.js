@@ -17,5 +17,12 @@ export default {
   HOST_PHONEMES: {
     'Lucia': 'lutS"i@',
     'Staruch': 'steIr\\Vk'
-  }
+  },
+  PODCASTS: [
+    {
+      'name': 'song of the day', // for identification in custom Podcast slot - value must be defined in skill interaction model
+      'feedUrl': 'https://feeds.publicradio.org/public_feeds/song-of-the-day/rss/rss.rss',
+      'behavior': null // FUTURE: Define podcast-specific behaviors like "serial" etc
+    }
+  ]
 }

@@ -6,7 +6,9 @@ var arrayToSentence = util.arrayToSentence
 
 var config
 
-exports.default = function (stationConfig, handler, error) {
+// Ask the skill what program and host are currently on the live stream
+
+module.exports = function (stationConfig, handler, error) {
   config = stationConfig
   return {
     'AskShowIntent': function () {

@@ -1,5 +1,4 @@
 var podcaster = require('../podcaster')
-// var states = require('../states')
 var cannotShuffleText = 'Sorry, I can\'t shuffle a podcast'
 var cannotYetDo = 'Sorry, I can\'t do that yet'
 

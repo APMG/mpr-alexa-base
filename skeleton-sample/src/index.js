@@ -1,5 +1,15 @@
-import config from './config'
-import mprAlexaBase from 'mpr-alexa-base'
+var config = require('./config')
+var alexaBase = require('mpr-alexa-base')
+var intents = alexaBase.intents
+var createLambdaHandler = alexaBase.createLambdaHandler
 
-mprAlexaBase.setConfig(config)
-exports.handler = mprAlexaBase.createLambdaHandler()
+let handlers = Object.assign(
+  intents.defaultBuiltIns(config),
+  intents.builtInAudio(config),
+  intents.askSong(config),
+  intents.askShow(config),
+  intents.playPodcast(config)
+  // ... add any other custom intent handlers here ...
+)
+
+exports.handler = createLambdaHandler(config, handlers)

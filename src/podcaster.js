@@ -1,6 +1,11 @@
 var got = require('got')
 var parsePodcast = require('node-podcast-parser')
 
+// Presented as-is. Ran into some problems with state persistence
+// that haven't been resolved yet, so the temporary fix to get a
+// minimum viable product involves commenting out problem code
+// because the actual solution appears to involve a rewrite
+
 module.exports = function (handler) {
   if (!handler.attributes.podcasts) {
     handler.attributes.podcasts = {

@@ -1,6 +1,8 @@
 var got = require('got')
 var get = require('lodash.get')
 
+// Not passing this in as a config variable
+// because it will be shared across all APM skills
 var apiUrl = 'https://accounts.publicradio.org/api/v1/'
 
 module.exports = function (handler) {
@@ -18,12 +20,13 @@ module.exports = function (handler) {
         customMsg || defaultMsg
       )
 
-      // If a client function receives this `false` response here, it should
+      // If client code receives this `false` response here, it should
       // immediately `return` to make sure code execution actually ceases
       // https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs/issues/208#issuecomment-341231525
       // ~EMN
       return false
     },
+
     getUser: function (handleSuccess, handleError) {
       var token = this.getToken(this)
 

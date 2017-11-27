@@ -3,8 +3,8 @@ exports.addPlayDirective = function (context, streamUrl) {
     'REPLACE_ALL', // replace the entire queue with the new url
     streamUrl,
     '1', // this is the track number. We are streaming live so it's only ever one track
-    null, // this would be the anticipated "next" track, if there were one
-    0 // where in the track to begin playing from, in milliseconds
+    null, // this would be the anticipated "next" track. For live streaming, there isn't one
+    0 // where in the track to begin playing from, in milliseconds. Always 0 for live stream
   )
 }
 
