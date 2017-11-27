@@ -24,7 +24,12 @@ let handlers = Object.assign(
 exports.handler = createLambdaHandler(config, handlers)
 ```
 
-## Deployment
-To get quickly up and running with the base intents plus `AskSongIntent` and `AskShowIntent`, you may copy and paste the contents of `skeleton-sample/intents.json` into the Alexa skill builder interaction model "Code" window.
+## Quick Start
+Do all the same things you would normally do to create a new Alexa Skill. Then:
 
-From within a skill using this base, run `yarn run deploy` (defined in the `skeleton-sample` to generate a file called `alexa-bundle.zip` that is ready to be uploaded to Lambda.
+1. Copy the contents of `skeleton-sample` into an empty directory and run `yarn install`
+
+2. Copy and paste the contents of `skeleton-sample/intents.json` into the Alexa skill builder interaction model "Code" window.
+
+## "Deployment"
+From within a skill using this base, run the `yarn deploy` command (defined in the `skeleton-sample/package.json`) to generate a `alexa-bundle.zip` file that is ready to be uploaded to Lambda.
