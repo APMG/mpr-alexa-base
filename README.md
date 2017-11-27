@@ -10,7 +10,6 @@ It provides standard handlers and audio handlers by default, as well as a few in
 var config = require('./config')
 var alexaBase = require('mpr-alexa-base')
 var intents = alexaBase.intents
-var createLambdaHandler = alexaBase.createLambdaHandler
 
 let handlers = Object.assign(
   intents.defaultBuiltIns(config),
@@ -21,7 +20,7 @@ let handlers = Object.assign(
   // ... add any other custom intent handlers here ...
 )
 
-exports.handler = createLambdaHandler(config, handlers)
+exports.handler = alexaBase.createLambdaHandler(config, handlers)
 ```
 
 ## Quick Start
