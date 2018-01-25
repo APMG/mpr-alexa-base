@@ -1,5 +1,5 @@
 const stationSlug = 'your-station-slug'
-export default {
+module.exports = {
   APP_ID: 'amzn1.ask.skill.abunch-ofletters-andnumbers-etc348-wgjeg',
   STATION_SLUG: stationSlug,
   STATION_NAME: 'Station name', // e.g., "The Current"
